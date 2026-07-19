@@ -15,11 +15,12 @@ jobs:
         submodules: recursive
 
     - name: Download and Extract ONNX Runtime
+      shell: bash
       run: |
         mkdir -p _deps
-        Invoke-WebRequest -Uri "https://github.com/microsoft/onnxruntime/releases/download/v1.18.0/onnxruntime-win-x64-1.18.0.zip" -OutFile "onnxruntime.zip"
-        Expand-Archive -Path "onnxruntime.zip" -DestinationPath "_deps"
-        Rename-Item -Path "_deps\onnxruntime-win-x64-1.18.0" -NewName "onnxruntime"
+        curl -L -o onnxruntime.zip "https://github.com/microsoft/onnxruntime/releases/download/v1.18.0/onnxruntime-win-x64-1.18.0.zip"
+        unzip -q -o onnxruntime.zip -d _deps
+        cp -r _deps/onnxruntime-win-x64-1.18.0/* _deps/onnxruntime/
 
     - name: Configure CMake
       run: cmake -B build -S .
