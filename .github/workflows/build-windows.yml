@@ -13,6 +13,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
+        lfs: true
 
     - name: Download and Extract ONNX Runtime
       shell: bash
@@ -28,14 +29,15 @@ jobs:
     - name: Build Project
       run: cmake --build build --config Release
 
-    - name: Bundle VC++ Runtime DLLs and Installer
+    - name: Bundle VC++ Runtime DLLs
       shell: bash
       run: |
-        cp /c/Windows/System32/msvcp140*.dll build/SubverseSplitter_artefacts/Release/Standalone/ || true
-        cp /c/Windows/System32/vcruntime140*.dll build/SubverseSplitter_artefacts/Release/Standalone/ || true
-        cp /c/Windows/System32/msvcp140*.dll build/SubverseSplitter_artefacts/Release/VST3/SubverseLabSplitter.vst3/Contents/x86_64-win/ || true
-        cp /c/Windows/System32/vcruntime140*.dll build/SubverseSplitter_artefacts/Release/VST3/SubverseLabSplitter.vst3/Contents/x86_64-win/ || true
-        curl -L -o build/SubverseSplitter_artefacts/Release/vc_redist.x64.exe "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+        cp /c/Windows/System32/msvcp140.dll build/SubverseSplitter_artefacts/Release/Standalone/
+        cp /c/Windows/System32/vcruntime140.dll build/SubverseSplitter_artefacts/Release/Standalone/
+        cp /c/Windows/System32/vcruntime140_1.dll build/SubverseSplitter_artefacts/Release/Standalone/
+        cp /c/Windows/System32/msvcp140.dll build/SubverseSplitter_artefacts/Release/VST3/SubverseLabSplitter.vst3/Contents/x86_64-win/
+        cp /c/Windows/System32/vcruntime140.dll build/SubverseSplitter_artefacts/Release/VST3/SubverseLabSplitter.vst3/Contents/x86_64-win/
+        cp /c/Windows/System32/vcruntime140_1.dll build/SubverseSplitter_artefacts/Release/VST3/SubverseLabSplitter.vst3/Contents/x86_64-win/
 
     - name: Upload Windows Executable and VST3
       uses: actions/upload-artifact@v4
