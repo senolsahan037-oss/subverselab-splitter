@@ -46,8 +46,11 @@ int main(int argc, char* argv[])
     
     // Test ONNX execution
     Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "SubverseSplitter");
-    Ort::SessionOptions sessionOptions;
-    Ort::Session session(env, "/Users/senolsahan/.gemini/antigravity-ide/scratch/SubverseSplitterPlugin/Resources/htdemucs.onnx", sessionOptions);
+#ifdef _WIN32
+    Ort::Session session(env, L"Resources/htdemucs.onnx", sessionOptions);
+#else
+    Ort::Session session(env, "Resources/htdemucs.onnx", sessionOptions);
+#endif
     Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
     
     const int CHUNK_SIZE = 343980;
