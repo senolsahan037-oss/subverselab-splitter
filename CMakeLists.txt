@@ -77,22 +77,21 @@ target_link_libraries(SubverseSplitter PRIVATE
     juce::juce_core
     ${ONNXRUNTIME_LIB}
 )
-
-if(WIN32)
-    # Copy ONNX Runtime DLL to executable directory
-    add_custom_command(TARGET SubverseSplitter POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-            "${ONNXRUNTIME_DLL}"
-            "$<TARGET_FILE_DIR:SubverseSplitter>"
-    )
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-# Copy the huge ONNX model next to the built binary to avoid 10-minute compilation times
-add_custom_command(TARGET SubverseSplitter POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-        "${CMAKE_CURRENT_SOURCE_DIR}/Resources/htdemucs.onnx"
-        "$<TARGET_FILE_DIR:SubverseSplitter>"
-)
+if(WIN32)
+    # Copy ONNX Runtime DLL and model to executable directory
+    add_custom_command(TARGET SubverseSplitter_Standalone POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy "${ONNXRUNTIME_DLL}" "$<TARGET_FILE_DIR:SubverseSplitter_Standalone>"
+        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/Resources/htdemucs.onnx" "$<TARGET_FILE_DIR:SubverseSplitter_Standalone>"
+    )
+    add_custom_command(TARGET SubverseSplitter_VST3 POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy "${ONNXRUNTIME_DLL}" "$<TARGET_FILE_DIR:SubverseSplitter_VST3>"
+        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/Resources/htdemucs.onnx" "$<TARGET_FILE_DIR:SubverseSplitter_VST3>"
+    )
+endif()
 
 # Optimization definitions
 target_compile_definitions(SubverseSplitter PRIVATE
