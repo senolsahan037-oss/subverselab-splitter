@@ -26,7 +26,7 @@ jobs:
       run: cmake -B build -S .
 
     - name: Build Project
-      run: cmake --build build --config Release --target SubverseSplitter
+      run: cmake --build build --config Release
 
     - name: Upload Windows Executable and VST3
       uses: actions/upload-artifact@v4
