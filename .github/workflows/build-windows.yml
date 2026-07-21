@@ -28,6 +28,15 @@ jobs:
     - name: Build Project
       run: cmake --build build --config Release
 
+    - name: Bundle VC++ Runtime DLLs and Installer
+      shell: bash
+      run: |
+        cp /c/Windows/System32/msvcp140*.dll build/SubverseSplitter_artefacts/Release/Standalone/ || true
+        cp /c/Windows/System32/vcruntime140*.dll build/SubverseSplitter_artefacts/Release/Standalone/ || true
+        cp /c/Windows/System32/msvcp140*.dll build/SubverseSplitter_artefacts/Release/VST3/SubverseLabSplitter.vst3/Contents/x86_64-win/ || true
+        cp /c/Windows/System32/vcruntime140*.dll build/SubverseSplitter_artefacts/Release/VST3/SubverseLabSplitter.vst3/Contents/x86_64-win/ || true
+        curl -L -o build/SubverseSplitter_artefacts/Release/vc_redist.x64.exe "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+
     - name: Upload Windows Executable and VST3
       uses: actions/upload-artifact@v4
       with:
