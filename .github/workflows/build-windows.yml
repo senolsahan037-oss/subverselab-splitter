@@ -32,6 +32,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: SubverseLabSplitter-Windows
-        path: |
-          build/SubverseSplitter_artefacts/**/Standalone/*
-          build/SubverseSplitter_artefacts/**/VST3/*
+        path: build/SubverseSplitter_artefacts/Release/
