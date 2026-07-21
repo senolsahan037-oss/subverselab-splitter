@@ -77,9 +77,6 @@ target_link_libraries(SubverseSplitter PRIVATE
     juce::juce_core
     ${ONNXRUNTIME_LIB}
 )
-if(MSVC)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
 
 if(WIN32)
     # Copy ONNX Runtime DLL and model to executable directory

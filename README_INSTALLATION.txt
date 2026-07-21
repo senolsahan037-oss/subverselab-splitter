@@ -7,12 +7,18 @@ This package includes both the Standalone Application (.exe) and
 the VST3 Audio Plugin (.vst3) for Windows 10 / 11 (64-bit).
 
 ------------------------------------------------------------------------
+IMPORTANT FIRST STEP (IF NEEDED):
+------------------------------------------------------------------------
+If you see an error saying "MSVCP140.dll was not found" when launching:
+- Double-click `vc_redist.x64.exe` included in this folder to install
+  the official Microsoft C++ Redistributable Runtime (takes 5 seconds).
+
+------------------------------------------------------------------------
 1. STANDALONE APPLICATION USAGE (.exe)
 ------------------------------------------------------------------------
-- Keep all files in the extracted folder (do not move SubverseLabSplitter.exe
-  away from onnxruntime.dll and htdemucs.onnx).
-- Double-click `Standalone/SubverseLabSplitter.exe` to launch the app.
-- Simply drag & drop any audio file to split stems (Vocals, Drums, Bass, Other).
+- Open the `Standalone` folder.
+- Double-click `SubverseLabSplitter.exe` to launch the app.
+- Drag & drop any audio file to split stems (Vocals, Drums, Bass, Other).
 
 ------------------------------------------------------------------------
 2. VST3 PLUGIN INSTALLATION (Ableton Live, FL Studio, Cubase, Reaper, etc.)
@@ -22,9 +28,6 @@ the VST3 Audio Plugin (.vst3) for Windows 10 / 11 (64-bit).
 
   Default Windows VST3 Path:
   C:\Program Files\Common Files\VST3\
-
-- Ensure `onnxruntime.dll` and `htdemucs.onnx` remain in the same 
-  folder as the plugin or executable.
 
 - Open your DAW (Ableton, FL Studio, Cubase, Studio One, etc.) and 
   perform a "Rescan Plugins" action in your DAW preferences.
