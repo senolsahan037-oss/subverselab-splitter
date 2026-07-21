@@ -46,6 +46,7 @@ int main(int argc, char* argv[])
     
     // Test ONNX execution
     Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "SubverseSplitter");
+    Ort::SessionOptions sessionOptions;
 #ifdef _WIN32
     Ort::Session session(env, L"Resources/htdemucs.onnx", sessionOptions);
 #else
