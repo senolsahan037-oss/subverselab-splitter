@@ -1,6 +1,8 @@
 #pragma once
 
 #include <JuceHeader.h>
+
+#include "Analysis.h"
 #include <onnxruntime_cxx_api.h>
 
 class SubverseSplitterAudioProcessor  : public juce::AudioProcessor
@@ -64,6 +66,21 @@ public:
         juce::File getBassFile() const { return bassFile; }
         juce::File getOtherFile() const { return otherFile; }
 
+        /** The mix with the vocal taken out — the backing track.
+
+            Derived as mix minus vocals rather than as the sum of the other
+            three stems. Those are different signals: the model's four stems do
+            not account for every sample of the input, and summing them drops
+            whatever it could not place. Subtracting keeps it, which is what
+            someone singing over the result actually wants. */
+        juce::File getInstrumentalFile() const { return instrumentalFile; }
+
+        /** Tempo and key for the file most recently separated. Computed on
+            the mix rather than on a stem: it is a property of the arrangement,
+            and measuring it on the mix means it is ready before separation
+            ends rather than after. */
+        AudioAnalysis getAnalysis() const { return analysis; }
+
     private:
         void loadModel();
         
@@ -80,12 +97,14 @@ public:
         juce::Atomic<double> progress{ 0.0 };
         juce::Atomic<bool> finishedSuccess{ false };
         juce::String errorMessage;
+        AudioAnalysis analysis;
 
         // Output file handles
         juce::File vocalsFile;
         juce::File drumsFile;
         juce::File bassFile;
         juce::File otherFile;
+        juce::File instrumentalFile;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ModelRunner)
     };
@@ -104,6 +123,19 @@ public:
     double getPlaybackPosition() const;
     double getTotalLength() const;
 
+    /** Moves every stem to the same point.
+
+        All four transports are driven together rather than through one master
+        clock, so a seek has to reach all of them or the mixer drifts apart —
+        which is the one thing a stem player must never do. */
+    void setPlaybackPosition (double seconds);
+
+    /** Per-stem level, 0 to 1. Independent of mute and solo: turning a stem
+        down and muting it are different intentions, and coming back from a
+        solo should restore the level you had set, not reset it. */
+    void setStemVolume (int stemIndex, float volume);
+    float getStemVolume (int stemIndex) const;
+
 private:
     ModelRunner modelRunner;
     
@@ -116,6 +148,15 @@ private:
     std::atomic<bool> isPlaying { false };
     std::atomic<bool> stemMutes[4] { false, false, false, false };
     std::atomic<bool> stemSolos[4] { false, false, false, false };
+    std::atomic<float> stemVolumes[4] { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    /** Recomputes every transport's gain from mute, solo and level together.
+
+        Mute and solo used to set the gain directly, each from its own copy of
+        the rule, and `setStemSolo` reached its half by calling `setStemMute`
+        with the value it already had. Adding a third input to that would have
+        meant a third copy. There is one rule and it lives here. */
+    void applyGains();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SubverseSplitterAudioProcessor)
 };
